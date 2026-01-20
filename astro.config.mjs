@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://YOUR-USERNAME.github.io',
-  // base: '/YOUR-REPO-NAME', // Remove this if deploying to username.github.io
+  site: 'https://Med-SD.github.io',
+  base: '/my-art-gallery',
 });
