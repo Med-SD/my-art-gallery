@@ -16,15 +16,15 @@ const artistMap = Object.fromEntries(
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>Art Gallery - Home</title>
-    <link rel="stylesheet" href="/src/styles/global.css" />
+    <link rel="stylesheet" href="./src/styles/global.css" />
   </head>
   <body>
     <header>
       <h1>🎨 Art Gallery</h1>
       <nav>
-        <a href="/">Home</a>
-        <a href="/paintings">All Paintings</a>
-        <a href="/artists">All Artists</a>
+        <a href="./">Home</a>
+        <a href="./paintings">All Paintings</a>
+        <a href="./artists">All Artists</a>
       </nav>
     </header>
 
@@ -34,7 +34,7 @@ const artistMap = Object.fromEntries(
         <div class="gallery">
           {featuredPaintings.map(painting => (
             <div class="painting-card">
-              <a href={`/paintings/${painting.data.id}`}>
+              <a href={`./paintings/${painting.data.id}`}>
                 <img src={painting.data.imageUrl} alt={painting.data.title} />
                 <div class="card-content">
                   <h3>{painting.data.title}</h3>
@@ -52,7 +52,7 @@ const artistMap = Object.fromEntries(
         <div class="artists-grid">
           {artists.slice(0, 6).map(artist => (
             <div class="artist-card">
-              <a href={`/artists/${artist.data.id}`}>
+              <a href={`./artists/${artist.data.id}`}>
                 {artist.data.image && (
                   <img src={artist.data.image} alt={artist.data.name} />
                 )}
