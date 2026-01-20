@@ -1,0 +1,246 @@
+---
+import { getCollection } from 'astro:content';
+import { formatDate, formatDateRange } from '../../utils/formatDate.js';
+
+const paintings = await getCollection('paintings');
+const artists = await getCollection('artists');
+
+// Create a map to get artist names from IDs
+const artistMap = Object.fromEntries(
+  artists.map(artist => [artist.data.id, artist.data.name])
+);
+
+// Sort paintings by date (newest first)
+const sortedPaintings = paintings.sort((a, b) => 
+  b.data.date.toString().localeCompare(a.data.date.toString())
+);
+
+// Get all unique tags
+const allTags = [...new Set(paintings.flatMap(p => p.data.tags))].sort();
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>All Paintings - Art Gallery</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">← Back to Home</a>
+      </nav>
+      <h1>All Paintings</h1>
+      <p class="subtitle">{paintings.length} paintings in the collection</p>
+    </header>
+
+    <aside class="filters">
+      <h3>Filter by Tag</h3>
+      <div class="tags">
+        <button class="tag-filter active" data-tag="all">Show All</button>
+        {allTags.map(tag => (
+          <button class="tag-filter" data-tag={tag}>{tag}</button>
+        ))}
+      </div>
+    </aside>
+
+    <main>
+      <div class="gallery">
+        {sortedPaintings.map(painting => (
+          <div class="painting-card" data-tags={painting.data.tags.join(',')}>
+            <a href={`/paintings/${painting.data.id}`}>
+              <img src={painting.data.imageUrl} alt={painting.data.title} />
+              <div class="painting-info">
+                <h2>{painting.data.title}</h2>
+                <p class="artist">by {artistMap[painting.data.artist] || painting.data.artist}</p>
+                <p class="date">{formatDate(painting.data.date, 'year')}</p>
+                <div class="tags">
+                  {painting.data.tags.slice(0, 3).map(tag => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                  {painting.data.tags.length > 3 && (
+                    <span class="tag">+{painting.data.tags.length - 3}</span>
+                  )}
+                </div>
+              </div>
+            </a>
+          </div>
+        ))}
+      </div>
+    </main>
+
+    <script>
+      // Simple client-side filtering
+      const filterButtons = document.querySelectorAll('.tag-filter');
+      const paintingCards = document.querySelectorAll('.painting-card');
+
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const selectedTag = button.dataset.tag;
+          
+          // Update active button
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          // Filter paintings
+          paintingCards.forEach(card => {
+            const cardTags = card.dataset.tags.split(',');
+            if (selectedTag === 'all' || cardTags.includes(selectedTag)) {
+              card.style.display = 'block';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  body {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  header {
+    margin-bottom: 2rem;
+  }
+
+  nav {
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+  }
+
+  .filters {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+
+  .filters h3 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+  }
+
+  .filters .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag-filter {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+
+  .tag-filter:hover {
+    background: var(--bg-primary);
+    border-color: var(--accent);
+    color: var(--text-primary);
+  }
+
+  .tag-filter.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .painting-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .painting-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px var(--shadow);
+  }
+
+  .painting-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .painting-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+  }
+
+  .painting-info {
+    padding: 1.5rem;
+  }
+
+  .painting-info h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+  }
+
+  .artist, .date {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0.25rem 0;
+  }
+
+  .painting-info .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .tag {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+
+    .gallery {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,87 @@
+:root {
+  /* Dark theme colors */
+  --bg-primary: #0f0f0f;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #242424;
+  --text-primary: #e4e4e4;
+  --text-secondary: #a0a0a0;
+  --text-muted: #707070;
+  --accent-hover: #60a5fa;
+  --border: #2a2a2a;
+  --shadow: rgba(0, 0, 0, 0.5);
+  /* Try different accent colors */
+  /* --accent: #3b82f6;  /* Blue (default) */
+  /* --accent: #8b5cf6;  /* Purple */
+  /* --accent: #ec4899;  /* Pink */
+  /* --accent: #10b981;  /* Green */
+  --accent: #f59e0b;  /* Orange */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Card styles */
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card:hover {
+  border-color: var(--accent);
+}
+
+/* Button styles */
+button {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent);
+}
+
+/* Navigation */
+nav a {
+  color: var(--accent);
+}
+
+/* Utility classes */
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}

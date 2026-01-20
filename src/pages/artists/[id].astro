@@ -1,0 +1,220 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+
+import { formatDate, formatDateRange } from '../../utils/formatDate.js';
+
+export async function getStaticPaths() {
+  const artists = await getCollection('artists');
+  return artists.map(artist => ({
+    params: { id: artist.data.id },
+    props: { artist },
+  }));
+}
+
+const { artist } = Astro.props;
+const { Content } = await artist.render();
+
+const allPaintings = await getCollection('paintings');
+const artistPaintings = allPaintings.filter(
+  painting => painting.data.artist === artist.data.id
+);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{artist.data.name} - Art Gallery</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body>
+    <nav>
+      <a href="/">← Back to Home</a>
+    </nav>
+
+    <main>
+      <article class="artist-header">
+        {artist.data.image && (
+          <img src={artist.data.image} alt={artist.data.name} class="artist-portrait" />
+        )}
+        
+        <div class="artist-info">
+          <h1>{artist.data.name}</h1>
+          <p class="dates">{formatDateRange(artist.data.birthDate, artist.data.deathDate, 'year')}</p>
+          
+          {artist.data.youtubeUrl && (
+            <div class="video-container">
+              <iframe
+                width="560"
+                height="315"
+                src={artist.data.youtubeUrl.replace('watch?v=', 'embed/')}
+                title="YouTube video about {artist.data.name}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+          )}
+        </div>
+      </article>
+
+      <section class="biography">
+        <h2>Biography</h2>
+        <div class="content">
+          <Content />
+        </div>
+      </section>
+
+      <section class="paintings">
+        <h2>Paintings ({artistPaintings.length})</h2>
+        <div class="gallery">
+          {artistPaintings.map(painting => (
+            <div class="painting-card">
+              <a href={`/paintings/${painting.data.id}`}>
+                <img src={painting.data.imageUrl} alt={painting.data.title} />
+                <div class="card-content">
+                  <h3>{painting.data.title}</h3>
+                  <p class="date">{formatDate(painting.data.date, 'year')}</p>
+                </div>
+              </a>
+            </div>
+          ))}
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+  body {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  nav {
+    margin-bottom: 2rem;
+  }
+
+  .artist-header {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .artist-portrait {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .artist-info h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2.5rem;
+    color: var(--text-primary);
+  }
+
+  .dates {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .video-container {
+    margin-top: 1.5rem;
+  }
+
+  .video-container iframe {
+    width: 100%;
+    max-width: 560px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .biography {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .biography h2 {
+    margin-top: 0;
+    color: var(--text-primary);
+  }
+
+  .content {
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  .paintings h2 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .painting-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .painting-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px var(--shadow);
+  }
+
+  .painting-card a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .painting-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+  }
+
+  .card-content {
+    padding: 1rem;
+  }
+
+  .card-content h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+  }
+
+  .date {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .artist-header {
+      grid-template-columns: 1fr;
+    }
+
+    .artist-portrait {
+      height: 300px;
+    }
+  }
+</style>

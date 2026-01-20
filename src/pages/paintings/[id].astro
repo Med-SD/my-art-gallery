@@ -1,0 +1,261 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import { formatDate, formatDateRange } from '../../utils/formatDate.js';
+
+export async function getStaticPaths() {
+  const paintings = await getCollection('paintings');
+  return paintings.map(painting => ({
+    params: { id: painting.data.id },
+    props: { painting },
+  }));
+}
+
+const { painting } = Astro.props;
+const { Content } = await painting.render();
+
+const artist = await getEntry('artists', painting.data.artist);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{painting.data.title} - Art Gallery</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body>
+    <nav>
+      <a href="/">← Back to Home</a>
+      {artist && (
+        <span> | <a href={`/artists/${artist.data.id}`}>View Artist: {artist.data.name}</a></span>
+      )}
+    </nav>
+
+    <main>
+      <article class="painting-detail">
+        <div class="painting-image">
+          <img src={painting.data.imageUrl} alt={painting.data.title} />
+        </div>
+
+        <div class="painting-info">
+          <h1>{painting.data.title}</h1>
+          
+          {artist && (
+            <p class="artist-name">
+              by <a href={`/artists/${artist.data.id}`}>{artist.data.name}</a>
+            </p>
+          )}
+          
+          <p class="date">{formatDate(painting.data.date, 'year')}</p>
+
+          <div class="tags">
+            {painting.data.tags.map(tag => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+
+          {painting.data.youtubeUrl && (
+            <div class="video-container">
+              <h2>Learn More</h2>
+              <iframe
+                width="560"
+                height="315"
+                src={painting.data.youtubeUrl.replace('watch?v=', 'embed/')}
+                title="YouTube video about {painting.data.title}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+          )}
+
+          <div class="description">
+            <h2>About this Painting</h2>
+            <div class="content">
+              <Content />
+            </div>
+          </div>
+        </div>
+      </article>
+
+      {artist && (
+        <section class="artist-section">
+          <h2>About the Artist</h2>
+          <div class="artist-preview">
+            {artist.data.image && (
+              <img src={artist.data.image} alt={artist.data.name} class="artist-thumb" />
+            )}
+            <div>
+              <h3>
+                <a href={`/artists/${artist.data.id}`}>{artist.data.name}</a>
+              </h3>
+              <p class="artist-dates">
+{formatDateRange(artist.data.birthDate, artist.data.deathDate, 'year')}
+              </p>
+              <a href={`/artists/${artist.data.id}`} class="view-artist">View Full Biography →</a>
+            </div>
+          </div>
+        </section>
+      )}
+    </main>
+  </body>
+</html>
+
+<style>
+  body {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  nav {
+    margin-bottom: 2rem;
+  }
+
+  .painting-detail {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .painting-image {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .painting-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px var(--shadow);
+  }
+
+  .painting-info {
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .painting-info h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2.5rem;
+    color: var(--text-primary);
+  }
+
+  .artist-name {
+    font-size: 1.3rem;
+    margin: 0 0 0.5rem 0;
+    color: var(--text-secondary);
+  }
+
+  .date {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .tag {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .video-container {
+    margin: 2rem 0;
+  }
+
+  .video-container h2 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .video-container iframe {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .description h2 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .content {
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  .artist-section {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .artist-section h2 {
+    margin-top: 0;
+    color: var(--text-primary);
+  }
+
+  .artist-preview {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .artist-thumb {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .artist-preview h3 {
+    margin: 0 0 0.5rem 0;
+  }
+
+  .artist-preview h3 a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .artist-dates {
+    color: var(--text-secondary);
+    margin: 0 0 1rem 0;
+  }
+
+  .view-artist {
+    font-weight: 500;
+  }
+
+  @media (max-width: 968px) {
+    .painting-detail {
+      grid-template-columns: 1fr;
+    }
+
+    .artist-preview {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+
+    .artist-thumb {
+      margin: 0 auto;
+    }
+  }
+</style>
