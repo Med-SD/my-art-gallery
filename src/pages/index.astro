@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import { formatDate, formatDateRange } from '../utils/formatDate.js';
 import '../styles/global.css';  // Add this import
+const { base } = Astro.site ? { base: import.meta.env.BASE_URL } : { base: '/' };
+// Or simply: const base = import.meta.env.BASE_URL;
 
 const paintings = await getCollection('paintings');
 const artists = await getCollection('artists');
@@ -22,8 +24,8 @@ const artistMap = Object.fromEntries(
     <header>
       <h1>🎨 Art Gallery</h1>
       <nav>
-        <a href="./">Home</a>
-        <a href="./paintings">All Paintings</a>
+        <a href={`${import.meta.env.BASE_URL}`}>Home</a>
+        <a href={`${import.meta.env.BASE_URL}paintings`}>All Paintings</a>
         <a href="./artists">All Artists</a>
       </nav>
     </header>
