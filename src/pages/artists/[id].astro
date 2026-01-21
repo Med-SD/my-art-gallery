@@ -1,7 +1,9 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
-
 import { formatDate, formatDateRange } from '../../utils/formatDate.js';
+import '../../styles/global.css';  // Add this import
+const { base } = Astro.site ? { base: import.meta.env.BASE_URL } : { base: '/' };
+// Or simply: const base = import.meta.env.BASE_URL;
 
 export async function getStaticPaths() {
   const artists = await getCollection('artists');
@@ -25,11 +27,10 @@ const artistPaintings = allPaintings.filter(
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>{artist.data.name} - Art Gallery</title>
-    <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
   <body>
     <nav>
-      <a href="/">← Back to Home</a>
+      <a href={`${import.meta.env.BASE_URL}`}>← Back to Home</a>
     </nav>
 
     <main>
@@ -70,7 +71,7 @@ const artistPaintings = allPaintings.filter(
         <div class="gallery">
           {artistPaintings.map(painting => (
             <div class="painting-card">
-              <a href={`/paintings/${painting.data.id}`}>
+              <a href={`${import.meta.env.BASE_URL}/paintings/${painting.data.id}`}>
                 <img src={painting.data.imageUrl} alt={painting.data.title} />
                 <div class="card-content">
                   <h3>{painting.data.title}</h3>
