@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://Med-SD.github.io',
+  site: 'https://med-sd.github.io',
   base: '/my-art-gallery',
 });

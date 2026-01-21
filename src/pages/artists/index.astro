@@ -6,6 +6,7 @@ import '../../styles/global.css';  // Add this import
 const { base } = Astro.site ? { base: import.meta.env.BASE_URL } : { base: '/' };
 // Or simply: const base = import.meta.env.BASE_URL;
 
+
 const artists = await getCollection('artists');
 
 // Sort artists by name
