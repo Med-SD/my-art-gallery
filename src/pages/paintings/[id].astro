@@ -25,9 +25,9 @@ const artist = await getEntry('artists', painting.data.artist);
   </head>
   <body>
     <nav>
-      <a href="./">← Back to Home</a>
+      <a href={`${import.meta.env.BASE_URL}`}>← Back to Home</a>
       {artist && (
-        <span> | <a href={`./artists/${artist.data.id}`}>View Artist: {artist.data.name}</a></span>
+        <span> | <a href={`${import.meta.env.BASE_URL}/artists/${artist.data.id}`}>View Artist: {artist.data.name}</a></span>
       )}
     </nav>
 
@@ -42,7 +42,7 @@ const artist = await getEntry('artists', painting.data.artist);
           
           {artist && (
             <p class="artist-name">
-              by <a href={`./artists/${artist.data.id}`}>{artist.data.name}</a>
+              by <a href={`${import.meta.env.BASE_URL}/artists/${artist.data.id}`}>{artist.data.name}</a>
             </p>
           )}
           
@@ -87,12 +87,12 @@ const artist = await getEntry('artists', painting.data.artist);
             )}
             <div>
               <h3>
-                <a href={`./artists/${artist.data.id}`}>{artist.data.name}</a>
+                <a href={`${import.meta.env.BASE_URL}/artists/${artist.data.id}`}>{artist.data.name}</a>
               </h3>
               <p class="artist-dates">
 {formatDateRange(artist.data.birthDate, artist.data.deathDate, 'year')}
               </p>
-              <a href={`./artists/${artist.data.id}`} class="view-artist">View Full Biography →</a>
+              <a href={`${import.meta.env.BASE_URL}/artists/${artist.data.id}`} class="view-artist">View Full Biography →</a>
             </div>
           </div>
         </section>
