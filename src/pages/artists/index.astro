@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { formatDate, formatDateRange } from '../../utils/formatDate.js';
+import '../../styles/global.css';  // Add this import
 
 const artists = await getCollection('artists');
 
@@ -22,12 +23,11 @@ paintings.forEach(painting => {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>All Artists - Art Gallery</title>
-    <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
   <body>
     <header>
       <nav>
-        <a href="/">← Back to Home</a>
+        <a href={`${import.meta.env.BASE_URL}`}>← Back to Home</a>
       </nav>
       <h1>All Artists</h1>
       <p class="subtitle">{artists.length} artists in the collection</p>
@@ -37,7 +37,7 @@ paintings.forEach(painting => {
       <div class="artists-grid">
         {sortedArtists.map(artist => (
           <div class="artist-card">
-            <a href={`/artists/${artist.data.id}`}>
+            <a href={`${import.meta.env.BASE_URL}/artists/${artist.data.id}`}>
               {artist.data.image ? (
                 <img src={artist.data.image} alt={artist.data.name} />
               ) : (
