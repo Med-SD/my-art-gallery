@@ -22,9 +22,9 @@ const artistMap = Object.fromEntries(
     <header>
       <h1>🎨 Art Gallery</h1>
       <nav>
-        <a href={`/`}>Home</a>
-        <a href={`/paintings/}`}>All Paintings</a>
-        <a href={`/artists/`}>All Artists</a>
+        <a href={`${import.meta.env.BASE_URL}`}>Home</a>
+        <a href={`${import.meta.env.BASE_URL}paintings`}>All Paintings</a>
+        <a href={`${import.meta.env.BASE_URL}artists`}>All Artists</a>
       </nav>
     </header>
 
@@ -34,7 +34,7 @@ const artistMap = Object.fromEntries(
         <div class="gallery">
           {featuredPaintings.map(painting => (
             <div class="painting-card">
-              <a href={`/paintings/${painting.data.id}`}>
+              <a href={`${import.meta.env.BASE_URL}paintings/${painting.data.id}`}>
                 <img src={painting.data.imageUrl} alt={painting.data.title} />
                 <div class="card-content">
                   <h3>{painting.data.title}</h3>
@@ -52,7 +52,7 @@ const artistMap = Object.fromEntries(
         <div class="artists-grid">
           {artists.slice(0, 6).map(artist => (
             <div class="artist-card">
-              <a href={`/artists/${artist.data.id}`}>
+              <a href={`${import.meta.env.BASE_URL}artists/${artist.data.id}`}>
                 {artist.data.image && (
                   <img src={artist.data.image} alt={artist.data.name} />
                 )}
