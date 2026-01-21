@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { formatDate, formatDateRange } from '../../utils/formatDate.js';
+import '../../styles/global.css';  // Add this import
 
 const paintings = await getCollection('paintings');
 const artists = await getCollection('artists');
@@ -24,12 +25,11 @@ const allTags = [...new Set(paintings.flatMap(p => p.data.tags))].sort();
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>All Paintings - Art Gallery</title>
-    <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
   <body>
     <header>
       <nav>
-        <a href="/">← Back to Home</a>
+        <a href="./">← Back to Home</a>
       </nav>
       <h1>All Paintings</h1>
       <p class="subtitle">{paintings.length} paintings in the collection</p>
@@ -49,7 +49,7 @@ const allTags = [...new Set(paintings.flatMap(p => p.data.tags))].sort();
       <div class="gallery">
         {sortedPaintings.map(painting => (
           <div class="painting-card" data-tags={painting.data.tags.join(',')}>
-            <a href={`/paintings/${painting.data.id}`}>
+            <a href={`./paintings/${painting.data.id}`}>
               <img src={painting.data.imageUrl} alt={painting.data.title} />
               <div class="painting-info">
                 <h2>{painting.data.title}</h2>
