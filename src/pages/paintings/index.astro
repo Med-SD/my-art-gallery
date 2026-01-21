@@ -3,6 +3,9 @@ import { getCollection } from 'astro:content';
 import { formatDate, formatDateRange } from '../../utils/formatDate.js';
 import '../../styles/global.css';  // Add this import
 
+const { base } = Astro.site ? { base: import.meta.env.BASE_URL } : { base: '/' };
+// Or simply: const base = import.meta.env.BASE_URL;
+
 const paintings = await getCollection('paintings');
 const artists = await getCollection('artists');
 
